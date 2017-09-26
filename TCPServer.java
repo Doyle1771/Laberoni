@@ -64,8 +64,38 @@ class Connection extends Thread {
       			formatted_msg msg = (formatted_msg) in.readObject();
       			if(msg.toString().equals("SETUP")){
       				//connect client to server
-      				
+      				name = msg.dest;      				
+      			}else if(msg.toString().equals("LOOPBACK")){
+      				out.writeObject(msg);
+      			}else if(msg.toString().equals("TERMINATE")){
+      				try{
+      					Thread.sleep(5000);
+      				}catch(InterruptedException e){System.out.println("Error: InterruptedException");}
+      				break;
+      			}else if(msg.toString().equals("BROADCAST")){
+      				for (Connection connection : all_connections) {
+      					connection.out.writeObject(msg);
+      				}
+      			}else if(msg.toString().equals("NORMAL")){
+      				String dest = msg.dest;
+      				boolean found=false;
+      				for(Connection connection : all_connections){
+      					if(connection.name.equals(dest)){
+      						connection.out.writeObject(msg);
+      						found=true;
+      					}
+      				}
+      				if(found==false){
+      					out.writeObject("Error: No Clients Found");
+      				}
+      			}else if(msg.toString().equals("GET_ALL_CLIENTS")){
+      				String clientList= "";
+      				for(Connection connection: all_connections){
+      					clientList+=connection.name+", ";
+      				}
+      				out.writeObject(clientList);
       			}
+
 				System.out.println("Reply: " + msg);
       			out.writeObject(msg);  
       			System.out.println("num connection " + all_connections.size());
