@@ -42,15 +42,17 @@ public class TCPClient {
 					System.out.println("close:"+e.getMessage());
 				}
 		}
+		Listen t  = new Thread();
+		t.start();
   }
 }
 
 
 
-class listen extends Thread
+class Listen extends Thread
 {
 	ObjectInputStream in;
-public listen(){
+public Listen(){
 	this.start();
 
 }
